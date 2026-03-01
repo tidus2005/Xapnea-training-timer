@@ -1,0 +1,5 @@
+{
+  "name": "Apnea Training Timer",
+  "description": "A freediving CO2 tolerance training timer that automatically decreases preparation time between rounds.",
+  "requestFramePermissions": []
+}
