@@ -12,6 +12,9 @@ else
 fi
 sleep 1
 
+echo "Installing dependencies..."
+npm install
+
 echo "Building frontend..."
 npm run build
 
