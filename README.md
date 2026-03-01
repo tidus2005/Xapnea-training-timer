@@ -10,7 +10,7 @@ View your app in AI Studio: https://ai.studio/apps/174b3b7b-8cd7-4c5c-b2c3-b4ee2
 
 ## Run Locally
 
-**Prerequisites:** Node.js
+**Prerequisites:** Node.js **>= 18**
 
 1. Install dependencies: `npm install`
 2. Copy [.env.example](.env.example) to `.env` and set `PORT=7010`, `DATABASE_PATH=./data/apnea.db` (optional; these are the defaults).
@@ -21,7 +21,7 @@ Open http://localhost:3010 in the browser. Training sessions are stored in SQLit
 
 ## One-Click Deploy (Restart)
 
-Run `npm run restart` to: stop the process on port 7010 (if any), build the frontend, and start the backend. **After restart, open http://localhost:7010** (the same server serves both API and the built frontend; port 3010 is only used when running `npm run dev`). Script: [restart.sh](restart.sh) in project root. Uses `PORT` from env (default 7010). Requires `bash` and `lsof` (macOS/Linux).
+Run `npm run restart` to: stop the process on port 7010 (if any), build the frontend, and start the backend. **After restart, open http://localhost:7010** (the same server serves both API and the built frontend; port 3010 is only used when running `npm run dev`). Script: [restart.sh](restart.sh) in project root. Uses `PORT` from env (default 7010). Requires **Node >= 18**, `bash`, and `lsof` (macOS/Linux).
 
 ## Production (e.g. Alibaba Cloud)
 

@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # One-click deploy: build frontend, restart backend (kill process on PORT then start server)
+# Requires Node.js >= 18
 set -e
 cd "$(dirname "$0")"
 PORT="${PORT:-7010}"
+
+NODE_VER=$(node -v 2>/dev/null | sed 's/^v//' | cut -d. -f1)
+if [ -z "$NODE_VER" ] || [ "$NODE_VER" -lt 18 ] 2>/dev/null; then
+  echo "Error: Node.js >= 18 required, current: $(node -v 2>/dev/null || echo 'not found')"
+  exit 1
+fi
 
 echo "Stopping process on port $PORT (if any)..."
 if command -v lsof >/dev/null 2>&1; then
