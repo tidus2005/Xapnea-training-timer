@@ -12,7 +12,8 @@ else
 fi
 sleep 1
 
-echo "Installing dependencies..."
+echo "Installing dependencies (clean install for correct native bindings)..."
+rm -rf node_modules
 npm install
 
 echo "Building frontend..."
