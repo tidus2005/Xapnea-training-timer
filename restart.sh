@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# One-click deploy: build frontend, restart backend (kill process on PORT then start server)
-# Requires Node.js >= 18
+# Restart backend + frontend. Backend: 7010, Frontend: 3010. Run after deploy.
+# Requires Node.js >= 18, dist/ from npm run deploy.
 set -e
 cd "$(dirname "$0")"
-PORT="${PORT:-7010}"
+BACKEND_PORT="${PORT:-7010}"
+FRONTEND_PORT="${FRONTEND_PORT:-3010}"
 
 NODE_VER=$(node -v 2>/dev/null | sed 's/^v//' | cut -d. -f1)
 if [ -z "$NODE_VER" ] || [ "$NODE_VER" -lt 18 ] 2>/dev/null; then
@@ -11,21 +12,27 @@ if [ -z "$NODE_VER" ] || [ "$NODE_VER" -lt 18 ] 2>/dev/null; then
   exit 1
 fi
 
-echo "Stopping process on port $PORT (if any)..."
-if command -v lsof >/dev/null 2>&1; then
-  (lsof -ti:"$PORT" | xargs kill -9) 2>/dev/null || true
-else
-  (fuser -k "$PORT/tcp") 2>/dev/null || true
-fi
+echo "Stopping backend (port $BACKEND_PORT) and frontend (port $FRONTEND_PORT)..."
+for port in "$BACKEND_PORT" "$FRONTEND_PORT"; do
+  if command -v lsof >/dev/null 2>&1; then
+    (lsof -ti:"$port" | xargs kill -9) 2>/dev/null || true
+  else
+    (fuser -k "$port/tcp") 2>/dev/null || true
+  fi
+done
 sleep 1
 
-echo "Installing dependencies (clean install for correct native bindings)..."
-rm -rf node_modules
-npm install
+echo "Starting backend on port $BACKEND_PORT..."
+export PORT=$BACKEND_PORT
+npm run server &
+BACKEND_PID=$!
+sleep 1
 
-echo "Building frontend..."
-npm run build
+if [ ! -d "dist" ]; then
+  echo "Warning: dist/ not found. Run 'npm run deploy' first. Backend is running (PID $BACKEND_PID)."
+  wait $BACKEND_PID
+  exit 0
+fi
 
-echo "Starting backend on port $PORT..."
-echo "Open: http://localhost:$PORT"
-exec npm run server
+echo "Starting frontend on port $FRONTEND_PORT (Open: http://localhost:$FRONTEND_PORT)"
+exec npm run preview
